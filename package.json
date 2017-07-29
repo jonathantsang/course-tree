@@ -1,10 +1,12 @@
 {
-  "name": "socket-chat-example",
-  "version": "0.0.1",
-  "description": "my first socket.io app",
+  "name": "course-tree",
+  "version": "0.0.2",
+  "description": "webapp",
   "dependencies": {
     "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+  },
+  "engines": {
+    "node": "7.10.0"
   },
   "scripts": {
     "start": "node index.js"
