@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "description": "webapp",
   "dependencies": {
-    "express": "^4.15.2",
+    "express": "^4.15.2"
   },
   "engines": {
     "node": "7.10.0"
