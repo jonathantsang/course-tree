@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 90%;
+            margin-right: .5%;
+        }
+
+        form button {
+            width: 9%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+
+        html,
+        body,
+        .cont {
+            height: 100%;
+        }
+
+        body {
+            font-family: helvetica;
+            margin: 0;
+            padding: 0;
+        }
+
+        .cont {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .circle {
+            z-index: 3;
+            height: 40px;
+            line-height: 40px;
+            width: 40px;
+            text-align: center;
+            color: #fff;
+            background-color: #2aE;
+            border-radius: 150px;
+            position: absolute;
+        }
+
+        .line {
+            height: 3px;
+            background-color: #aaa;
+            transform-origin: left center;
+            position: absolute;
+            z-index: 1;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages li {
+            padding: 5px 10px;
+        }
+
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+
+        #messages {
+            margin-bottom: 40px
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <div class="cont">
+
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function() {
+            var socket = io();
+            $('form').submit(function() {
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+                return false;
+            });
+            socket.on('chat message', function(msg) {
+                $('#messages').append($('<li>').text(msg));
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });
+
+        // Nodes
+        var circles = $('<div class="circle">'),
+            cont = $('.cont'),
+            n = 2;
+
+        //generate circles
+        while (n--) cont.append(circles.clone().text(n + 1));
+        circles = $('.circle');
+
+        //position circles randomly
+        var w = $('.cont').width(),
+            h = $('.cont').height();
+        console.log(w, h);
+        
+        var id = 0;
+        circles.each(function() {
+            $(this).addClass(id);
+            if(id == circles.length - 1){
+              $(this).css('top', 200 + 'px');
+              $(this).css('left', 200 + 'px');
+            } else {
+              $(this).css('top', h * Math.random() + 'px');
+              $(this).css('left', w * Math.random() + 'px');
+            }
+            id++;
+        });
+        $('0').removeClass('.circle').addClass('.baseNode');
+
+
+        //generate lines
+        circles.each(function(i) {
+            var pos0 = $(this).position(),
+                pos1 = (circles.eq(i + 1) || {}).position();
+
+            if (pos1 == undefined) return;
+            var x0 = pos0.left,
+                y0 = pos0.top,
+                x1 = pos1.left,
+                y1 = pos1.top;
+            line(x0, y0, x1, y1);
+        });
+
+
+        function line(x, y, x1, y1) {
+            var l = $("<div class='line'>");
+            //soh cah TOA and pythargoream theorem
+            var w = circles.width() / 2;
+            l.css({
+                top: y + w,
+                left: x + w,
+                width: Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y)),
+                transform: 'rotate(' + Math.atan2((y1 - y), (x1 - x)) + 'rad)'
+            });
+            cont.append(l);
+        }
+    </script>
+</body>
+
+</html>
